@@ -15,20 +15,19 @@ const (
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Printf("Simplest timer for Pomodoro Technique.\n\nusage: %v <work minute> <rest minute>\n\n", os.Args[0])
+		printUsage()
 		os.Exit(1)
 	}
-	wm, err := strconv.Atoi(os.Args[1])
-	if err != nil || wm < 1 || wm > maxMin {
-		os.Exit(1)
-	}
-	rm, err := strconv.Atoi(os.Args[2])
-	if err != nil || rm < 1 || rm > maxMin {
+	wm, werr := strconv.Atoi(os.Args[1])
+	rm, rerr := strconv.Atoi(os.Args[2])
+	if werr != nil || wm < 1 || wm > maxMin || rerr != nil || rm < 1 || rm > maxMin {
+		printUsage()
 		os.Exit(1)
 	}
 	workMin, restMin := time.Duration(wm)*time.Minute, time.Duration(rm)*time.Minute
 
 	if termbox.Init() != nil {
+		printInitializationError()
 		os.Exit(1)
 	}
 	defer termbox.Close()
@@ -72,6 +71,14 @@ func main() {
 			return
 		}
 	}
+}
+
+func printUsage() {
+	fmt.Printf("Simplest timer for Pomodoro Technique.\n\nusage: %v <work minute> <rest minute>\n\n", os.Args[0])
+}
+
+func printInitializationError() {
+	fmt.Errorf("initialization failed\n\n")
 }
 
 func drawAll(c termbox.Attribute) {
