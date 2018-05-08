@@ -14,12 +14,21 @@ const (
 )
 
 func main() {
-	if len(os.Args) != 3 {
+	var (
+		wm, rm     int
+		werr, rerr error
+	)
+	switch len(os.Args) {
+	case 1:
+		wm, werr = 25, nil
+		rm, rerr = 5, nil
+	case 3:
+		wm, werr = strconv.Atoi(os.Args[1])
+		rm, rerr = strconv.Atoi(os.Args[2])
+	default:
 		printUsage()
 		os.Exit(1)
 	}
-	wm, werr := strconv.Atoi(os.Args[1])
-	rm, rerr := strconv.Atoi(os.Args[2])
 	if werr != nil || wm < 1 || wm > maxMin || rerr != nil || rm < 1 || rm > maxMin {
 		printUsage()
 		os.Exit(1)
@@ -74,7 +83,14 @@ func main() {
 }
 
 func printUsage() {
-	fmt.Printf("Simplest timer for Pomodoro Technique.\n\nusage: %v <work minute> <rest minute>\n\n", os.Args[0])
+	fmt.Printf(`Simplest timer for Pomodoro Technique.
+
+usage: %v
+       %[1]v <work minute> <rest minute>
+
+Default work-minute and rest-minute are 25 and 5.
+
+`, os.Args[0])
 }
 
 func printInitializationError() {
